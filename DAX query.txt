@@ -1,0 +1,32 @@
+AgGroup = SWITCH(TRUE(), 
+'ccdb cust_details'[customer_age] < 30, "20-30", 
+'ccdb cust_details'[customer_age] >= 30 && 'ccdb cust_details'[customer_age] < 40, "30-40",
+'ccdb cust_details'[customer_age] >= 40 && 'ccdb cust_details'[customer_age] < 50, "40-50",
+'ccdb cust_details'[customer_age] >= 50 && 'ccdb cust_details'[customer_age] < 60, "50-60",
+'ccdb cust_details'[customer_age] <= 60, "60+",
+"Unknown"
+)
+---------------------------------------------------
+IncomeGroup = SWITCH(
+    TRUE(),
+    'ccdb cust_details'[income] < 35000, "Low",
+    'ccdb cust_details'[income] >= 35000 && 'ccdb cust_details'[income] < 70000, "Med",
+    'ccdb cust_details'[income] >= 70000, "High",
+    "Unknown"
+)
+---------------------------------------------------
+week_num2 = WEEKNUM('ccdb cc_detais'[week_start_date])
+---------------------------------------------------
+Current_week_revene = CALCULATE(
+    SUM('ccdb cc_detais'[Revenue]),
+    FILTER(
+        ALL('ccdb cc_detais'),
+        'ccdb cc_detais'[week_num2] = MAX('ccdb cc_detais'[week_num2])))
+---------------------------------------------------
+Pervious_week_revene = CALCULATE(
+    SUM('ccdb cc_detais'[Revenue]),
+    FILTER(
+        ALL('ccdb cc_detais'),
+        'ccdb cc_detais'[week_num2] = MAX('ccdb cc_detais'[week_num2])-1))
+---------------------------------------------------
+wow_revenue = DIVIDE(([Current_week_revene] - [Pervious_week_revene]), [Pervious_week_revene])
